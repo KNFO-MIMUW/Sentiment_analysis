@@ -1,19 +1,19 @@
-import twitterscraper as ts
-import pandas as pd
-from glob import glob
-import os
 import gzip
+import os
+import pandas as pd
+import twitterscraper as ts
+from glob import glob
 
 
-def query(query, n=0, since='2017-01-01', until='2018-01-01', lang='en', poolsize=15):
-    r"""Query at least n tweets per day in [since, until] range
+def query(query, n=0, since='2017-01-01', until='2018-01-01', lang='en', poolsize=30):
+    r"""Query at least n tweets per day in [since, until] range.
 
-    :param query:
-    :param n:
-    :param since:
-    :param until:
-    :param lang:
-    :param poolsize:
+    :param query: twitter query string
+    :param n: minimum # of tweets to fetch
+    :param since: reasonably formatted date
+    :param until: reasonably formatted date
+    :param lang: ISO code for tweet language
+    :param poolsize: # of processes to start for fetching tweets (default 30)
     :return:
     """
 
@@ -36,6 +36,15 @@ def query(query, n=0, since='2017-01-01', until='2018-01-01', lang='en', poolsiz
 
 
 def fetch_all(companies, queries, dir, overwrite=False, poolsize=30):
+    r"""Execute queries and save results.
+
+    :param companies: S&P Companies data
+    :param queries: Twitter queries corresponding to companies
+    :param dir: Path to directory for saving tweets
+    :param overwrite: Set True to overwrite previously saved tweets (dafault False)
+    :param poolsize: # of processes to start for fetching tweets (default 30)
+    :return: None
+    """
     os.makedirs(dir, exist_ok=True)
     for c, q in zip(companies.itertuples(), queries):
         if not overwrite and glob(os.path.join(dir, c.Symbol+'.csv.gz')):
